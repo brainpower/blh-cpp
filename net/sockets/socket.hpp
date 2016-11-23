@@ -54,7 +54,10 @@ public:
 	void connect(const uint32_t addr, const uint16_t port, const int timeout);
 
 	ssize_t  send(const void *data, const size_t len);
-	ssize_t  receive( void *data, const size_t len);
+  ssize_t  receive( void *data, const size_t len);
+
+  ssize_t read( void *data, size_t len );
+  ssize_t write(const void *data, size_t len);
 
 	void close() { ::close(_sock); _connected = false; }
 	bool isConnected() const { return _connected; }
@@ -82,6 +85,7 @@ private:
 	friend class ServSocket;
 };
 
+/*
 template<class T>
 Socket& Socket::operator<<(const T &lhs){
 	write(lhs, sizeof(T));
@@ -92,4 +96,5 @@ Socket& Socket::operator>>(T &lhs) {
 	read(&lhs, sizeof(T));
 	return *this;
 }
+*/
 #endif //SOCKET_HXX

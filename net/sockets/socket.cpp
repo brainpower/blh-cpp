@@ -227,6 +227,17 @@ ssize_t Socket::receive(void *data, const size_t len){
 	return -1;
 }
 
+ssize_t Socket::write(const void *data, const size_t len){
+	if(_connected)
+		return ::write(_sock, data, len);
+}
+
+ssize_t Socket::read(void *data, const size_t len){
+	if(_connected)
+		return ::read(_sock, data, len);
+}
+
+
 uint32_t Socket::stoaddr(const string &str){
 	in_addr addr;
 	int n = inet_pton(AF_INET, str.c_str(), &addr); // converts ipv4 addr's from string "x.x.x.x" to uint32_t
@@ -249,7 +260,7 @@ uint32_t Socket::nametoaddr(const string &str){
 }
 
 Socket& Socket::operator<< (const std::string &lhs){
-	send(lhs.c_str(), lhs.size());
+	write(lhs.c_str(), lhs.size());
 	return *this;
 }
 
@@ -257,11 +268,11 @@ template <>
 Socket& Socket::operator>> <>(std::string &lhs){
 	char cbuff[1024];
 
-	auto len = receive(&cbuff, sizeof(cbuff));
+	auto len = read(&cbuff, sizeof(cbuff));
 	lhs = std::string (cbuff, len);
 
 	while(len == sizeof(cbuff)){
-		len = receive(&cbuff, sizeof(cbuff));
+		len = read(&cbuff, sizeof(cbuff));
 		lhs.append( std::string(cbuff, len) );
 	}
 	return *this;
